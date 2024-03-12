@@ -59,26 +59,51 @@ class Author:
 
     def magazines(self):
         return list({article.magazine for article in self.articles()})
-
+    
     def add_article(self, magazine, title):
-        Article(self, magazine, title)
+        return Article(self, magazine, title)
         
     def topic_areas(self):
-        pass
-
+        topic_area = list({article.magazine.category for article in self.articles()})
+        return topic_area if topic_area else None
 class Magazine:
     def __init__(self, name, category):
         self.name = name
         self.category = category
 
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, name):
+        if isinstance(name, str) and 2 <= len(name) <= 16:
+            self._name =  name
+        else:
+            raise Exception("Name has to be a string")
+        
+    @property
+    def category(self):
+        return self._category
+    
+    @category.setter
+    def category(self, category):
+        if isinstance(category, str) and len(category) > 0:
+            self._category =  category
+        else:
+            raise Exception("CCategory has to be a string")
+
     def articles(self):
-        pass
+        return [article for article in Article.all if article.magazine == self]
 
     def contributors(self):
-        pass
-
+        return list({article.author for article in Article.all if article.magazine == self})
+    
     def article_titles(self):
-        pass
+        article_title = list({article.title for article in Article.all if article.magazine == self})
+        return article_title if article_title else None
 
     def contributing_authors(self):
-        pass
+        all_authors = list(article.author for article in Article.all if article.magazine == self)
+        contrib_author = list(cont_author for cont_author in all_authors if all_authors.count(cont_author) >= 2)
+        return contrib_author if contrib_author else None
